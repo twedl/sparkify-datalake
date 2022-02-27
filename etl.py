@@ -9,8 +9,8 @@ from pyspark.sql.functions import year, month, dayofmonth, hour, weekofyear, dat
 config = configparser.ConfigParser()
 config.read('dl.cfg')
 
-os.environ['AWS_ACCESS_KEY_ID']=config['AWS_ACCESS_KEY_ID']
-os.environ['AWS_SECRET_ACCESS_KEY']=config['AWS_SECRET_ACCESS_KEY']
+os.environ['AWS_ACCESS_KEY_ID']=config['KEYS']['AWS_ACCESS_KEY_ID']
+os.environ['AWS_SECRET_ACCESS_KEY']=config['KEYS']['AWS_SECRET_ACCESS_KEY']
 
 
 def create_spark_session():
@@ -86,9 +86,10 @@ def main():
     input_data = "s3a://udacity-dend/"
     output_data = ""
     
-    process_song_data(spark, input_data, output_data)    
-    process_log_data(spark, input_data, output_data)
+    # process_song_data(spark, input_data, output_data)    
+    # process_log_data(spark, input_data, output_data)
 
+    spark.stop()
 
 if __name__ == "__main__":
     main()
