@@ -23,40 +23,56 @@ def create_spark_session():
 
 def process_song_data(spark, input_data, output_data):
     # get filepath to song data file
-    song_data = os.path.join(input_data, "song_data")
+    song_data = input_data + "song_data"
     
     # read song data file
     df = spark.read.format("json").load("s3://udacity-dend/song_data/A/A/A/*.json")
     df.show(2)
 
     # # extract columns to create songs table
-    # songs_table = 
+    songs_table = df.select(["song_id","title","artist_id","year","duration"])
     
     # # write songs table to parquet files partitioned by year and artist
-    # songs_table
+    song_output_path = output_data + "songs.parquet"
+    songs_table.write.partitionBy("year","artist_id").mode("overwrite").parquet(song_output_path)
 
     # # extract columns to create artists table
-    # artists_table = 
+    artists_table = df.select(\
+        col("artist_id"),\
+        col("artist_name").alias("name"),\
+        col("artist_location").alias("location"),\
+        col("artist_latitude").alias("latitude"),\
+        col("artist_longitude").alias("longitude"))\
+        .dropDuplicates()
     
+    artist_output_path = output_data + "artists.parquet"
     # # write artists table to parquet files
-    # artists_table
+    artists_table.write.mode("overwrite").parquet(artist_output_path)
 
 
 def process_log_data(spark, input_data, output_data):
     # get filepath to log data file
-    # log_data =
+    log_data = input_data + "log_data/*/*/*.json"
 
     # # read log data file
-    # df = 
+    df = spark.read.format("json").load(log_data)
     
     # # filter by actions for song plays
-    # df = 
+    df = df.filter(df.page == 'NextSong')
 
+    df.show(2)
     # # extract columns for users table    
-    # artists_table = 
+    #users_table = df.select(["user_id","first_name","last_name","gender","level"])# will need to rename these things
+    users_table = df.select(\
+        col("userId").alias("user_id"),\
+        col("firstName").alias("first_name"),\
+        col("lastName").alias("last_name"),\
+        col("gender"),\
+        col("level"))\
+        .dropDuplicates() # will need to rename these things
     
     # # write users table to parquet files
-    # artists_table
+    users_table.write.mode("overwrite").parquet(output_data + "users.parquet")
 
     # # create timestamp column from original timestamp column
     # get_timestamp = udf()
@@ -85,10 +101,10 @@ def process_log_data(spark, input_data, output_data):
 def main():
     spark = create_spark_session()
     input_data = "s3a://udacity-dend/"
-    output_data = ""
+    output_data = "s3a://sparkify-udac-dl/"
     
     process_song_data(spark, input_data, output_data)    
-    # process_log_data(spark, input_data, output_data)
+    process_log_data(spark, input_data, output_data)
 
     spark.stop()
 

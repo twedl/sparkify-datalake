@@ -23,9 +23,7 @@ export LSCOLORS=ExFxBxDxCxegedabagacad
 
 # set up python environment?
 # don't really need virtual environment because there's only one thing to do
-python3 -m venv env
-source env/bin/activate
-pip install --upgrade pip
-pip install configparser 
-pip install pyspark
+sudo pip install --upgrade pip
+sudo pip install configparser 
+sudo pip install pyspark
 

@@ -6,7 +6,7 @@ aws \
 emr create-cluster \
 --name spark-cluster \
 --use-default-roles \
---release-label emr-5.20.0 \
+--release-label emr-5.28.0 \
 --instance-count 3 \
 --applications Name=Spark Name=Zeppelin \
 --bootstrap-actions Path="s3://udac-bootstrap-sh/bootstrap-emr.sh" \
