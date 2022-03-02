@@ -2,10 +2,9 @@ import configparser
 from datetime import datetime
 import os
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import udf, col
+from pyspark.sql.functions import monotonicallyIncreasingId, TimestampType, to_timestamp, from_unixtime, col
 from pyspark.sql.functions import year, month, dayofmonth, dayofweek, hour, weekofyear, date_format
-from pyspark.sql import functions as F
-from pyspark.sql.types import TimestampType
+
 
 config = configparser.ConfigParser()
 config.read('dl.cfg')
@@ -72,7 +71,7 @@ def process_log_data(spark, input_data, output_data):
     users_table.write.mode("overwrite").parquet(output_data + "users.parquet")
 
     # # create timestamp column from original timestamp column
-    df = df.withColumn("start_time", F.to_timestamp(F.from_unixtime(col("ts")/1000), "yyyy-MM-dd HH:mm:ss"))
+    df = df.withColumn("start_time", to_timestamp(from_unixtime(col("ts")/1000), "yyyy-MM-dd HH:mm:ss"))
     
     # # extract columns to create time table
     time_table = df.select(col("start_time")).dropDuplicates()\
@@ -107,7 +106,8 @@ def process_log_data(spark, input_data, output_data):
         .join(artists_df, [df.artist == artists_df.artist_name, songs_df.artist_id_songs == artists_df.artist_id], "left")\
         .select(["start_time","userid","level","song_id","artist_id","sessionid","location"])\
         .withColumnRenamed("userid","user_id")\
-        .withColumnRenamed("sessionid","session_id")
+        .withColumnRenamed("sessionid","session_id")\
+        .withColumn("songplay_id", monotonicallyIncreasingId).show()
 
     songplays_df = songplays_df.join(time_table.select(["start_time","year","month"]), songplays_df.start_time == time_table.start_time, "left")
 
