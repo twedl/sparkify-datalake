@@ -74,7 +74,7 @@ The pipeline:
 2. Read all song files from S3
 3. Use song files to create song and artists datasets and write them to partitioned parquet files in output S3 bucket
 4. Read all log files from S3
-5. Use log files to user and time tables and write them to S3 bucket
+5. Use log files to user and time tables and write them to output S3 bucket
 6. Filter log for songplay events (page == "NextSong")
 6. Use song and artists tables from step 3 to find song id and artist id for each songplay in the log
 7. Write songplay table to output S3 bucket
