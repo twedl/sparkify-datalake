@@ -1,6 +1,6 @@
 # Schema for Song Play Analysis 
 
-This repo has python code and sql queries for a data pipeline in AWS (S3, EMR and Spark) that creates analytical database for song play analysis at Sparkify. Analysis could include summary statistics for song plays by user type, time, artist, and location, among many other possibilities.
+Sparkify requires an ETL pipeline to handle the activity of a large and growing userbase. This repo has python code and sql queries for a data pipeline in AWS (S3, EMR and Spark) that creates analytical database for song play analysis. Analysis could include summary statistics for song plays by user type, time, artist, and location, among many other possibilities.
 
 ## Setup
 
@@ -36,7 +36,7 @@ Done!
 
 * `create-emr-cluster.sh`: command to create the EMR cluster
 * `bootstrap-emr-sh`: file that `create-emr-cluster.sh` uses to install important packages; must be uploaded to S3 bucket
-* `dl.cfg`: (Not included: config file with AWS access and secret keys)
+* `dl.cfg`: (Config file with AWS access and secret keys; not included)
 * `etl.py`: script to ingest all the data in the S3 buckets and insert into the staging and analytical tables
 
 ### Run
@@ -67,7 +67,7 @@ The dimensions tables are populated with data from the song information in the S
 - `time`: timestamps of records in `songplays` broken down into specific units
   - `start_time`,`hour`,`day`,`week`,`month`,`year`,`weekday`
 
-This star schema was chosen to reduce redundency in the database; this reduces storage required as well as reducing the chance that errors are introduced because song and artist information can be updated in one table only. The presence of `level` in both the `songplays` table and `users` table represents the fact that level can change over time; `level` in `users` is the current subscription level (paid or free) of the user, but that may not reflect the subscription level the user had when they played the song. The schema trades-off the confusing nature of a database that is not completely normalized for the accuracy of historical subscription levels. This is important for analytical queries of streaming behaviour and will inform the direction of the business. In the future, the schema should be changed to reflect highlight the difference in `levels`, by, e.g., renaming `level` to `level_historical` in the `songplays` table, or `level_current` in the `users` table.
+This star schema was chosen to reduce redundency in the database; this reduces storage required as well as reducing the chance that errors are introduced because song and artist information can be updated in one table only.
 
 Using the star schema may increase query time if every query requires joining the dimension tables to the fact tables to produce results. In this case, future schemas may include commonly required dimensions into the fact table itself. However, this increases the likelihood of errors introduced by updating dimensions in the dimension table but not the fact table, or vice versa.
 
