@@ -38,7 +38,7 @@ After running this, the S3 bucket with path `output_data` in `etl.py` should exi
 ### Files
 
 * `create-emr-cluster.sh`: command to create the EMR cluster
-* `bootstrap-emr-sh`: file that `create-emr-cluster.sh` uses to install important packages; must be uploaded to S3 bucket
+* `bootstrap-emr.sh`: file that `create-emr-cluster.sh` uses to install important packages; must be uploaded to S3 bucket
 * `dl.cfg`: (Config file with AWS access and secret keys; not included)
 * `etl.py`: script to ingest all the data in the S3 buckets and insert into the staging and analytical tables
 
@@ -58,13 +58,15 @@ The dimensions tables are populated with data from the song information in the S
 - `songs`: songs in the music database, with columns:
   - `song_id`,`title`,`artist_id`,`year`,`duration`
 - `artists`: artists in the music database, with columns:
-  - `artist_id`,`name`,`loction`,`latitude`,`longitude`
+  - `artist_id`,`name`,`location`,`latitude`,`longitude`
 - `time`: timestamps of records in `songplays` broken down into specific units
   - `start_time`,`hour`,`day`,`week`,`month`,`year`,`weekday`
 
 This star schema was chosen to reduce redundency in the database; this reduces storage required as well as reducing the chance that errors are introduced because song and artist information can be updated in one table only.
 
 Using the star schema may increase query time if every query requires joining the dimension tables to the fact tables to produce results. In this case, future schemas may include commonly required dimensions into the fact table itself. However, this increases the likelihood of errors introduced by updating dimensions in the dimension table but not the fact table, or vice versa.
+
+The `songplays` and `time` tables are partitioned by year and month, and the `songs` table is partitioned by year and artist. This allows Spark queries quicker access to data relevant to the query; for instance, queries that filter by "year == 2018" can access 2018 data directly without having to find where that data is on disk.
 
 ## ETL Pipeline
 
