@@ -73,9 +73,12 @@ The pipeline:
 1. Create EMR cluster (via AWS CLI command in bash script) 
 2. Read all song files from S3
 3. Use song files to create song and artists datasets and write them to partitioned parquet files in output S3 bucket
+  - song table files partitioned by year and then artist
 4. Read all log files from S3
-5. Use log files to user and time tables and write them to output S3 bucket
+5. Use log files to create user and time tables and write them to output S3 bucket
+  - time table files are partitioned by year and month
 6. Filter log for songplay events (page == "NextSong")
 6. Use song and artists tables from step 3 to find song id and artist id for each songplay in the log
 7. Write songplay table to output S3 bucket
+  - songplay table files are partitioned by year and month
 
