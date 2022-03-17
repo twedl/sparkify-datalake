@@ -4,7 +4,7 @@ Sparkify requires an ETL pipeline to handle the activity of a large and growing 
 
 ## Setup
 
-### Install
+### Prep and run
 
 Start by creating a key-pair on your AWS account. Then clone the git repo:
 ```
@@ -26,10 +26,13 @@ ssh -i <YOUR KEY>.pem hadoop@<YOUR EMR MASTER DNS>
 Make sure the correct python packages are installed and then submit the pyspark script:
 ```
 sudo pip install configparser pyspark
+```
+To create the database and insert the data into tables, run:
+```
 sudo spark-submit --master yarn etl.py
 ```
 
-Done!
+After running this, the S3 bucket with path `output_data` in `etl.py` should exist with parquet files `songplays`, `users`, `songs`, `artists`, and `time`. Done!
 
 
 ### Files
@@ -39,14 +42,6 @@ Done!
 * `dl.cfg`: (Config file with AWS access and secret keys; not included)
 * `etl.py`: script to ingest all the data in the S3 buckets and insert into the staging and analytical tables
 
-### Run
-
-To create the database and insert the data into tables, run:
-```
-sudo spark-submit --master yarn etl.py
-```
-
-After running this, the S3 bucket with path `output_data` in `etl.py` should exist with parquet files `songplays`, `users`, `songs`, `artists`, and `time`. 
 
 ## Schema
 
