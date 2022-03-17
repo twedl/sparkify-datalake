@@ -10,9 +10,6 @@ sudo yum install -y tmux
 sudo yum install -y git
 sudo yum install -y blas lapack
 
-# change the bucket name
-#aws s3 cp s3://<YOUR_BUCKET>/users/<YOUR_NAME>/bootstraps $HOME/bootstraps --recursive
-
 # Set spark home (so that findspark finds spark)
 echo '
 export SPARK_HOME=/usr/lib/spark
@@ -20,10 +17,3 @@ export PS1="\[\033[36m\]\u\[\033[m\]@\[\033[32m\]\h \[\033[33;1m\]\w\[\033[m\]\$
 export CLICOLOR=1
 export LSCOLORS=ExFxBxDxCxegedabagacad
 ' >> $HOME/.profile
-
-# set up python environment?
-# don't really need virtual environment because there's only one thing to do
-sudo pip3 install --upgrade pip3
-sudo pip3 install configparser 
-sudo pip3 install pyspark
-
